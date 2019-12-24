@@ -1,0 +1,18 @@
+﻿<UserControl x:Class="PestControlAnimator.wpf.controls.Keyframe"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PestControlAnimator.wpf.controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="20" d:DesignWidth="20">
+    <Grid>
+        <Ellipse xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Width="15" Height="15" Name="rect3761" Fill="#FFA08B40"  MouseEnter="mouseEnter" MouseLeave="mouseLeave" MouseMove="rect3761_MouseMove" MouseDown="rect3761_MouseDown" MouseUp="rect3761_MouseUp">
+            <Ellipse.RenderTransform>
+                
+                <TranslateTransform X="0"/>
+            </Ellipse.RenderTransform>
+
+        </Ellipse>
+    </Grid>
+</UserControl>
