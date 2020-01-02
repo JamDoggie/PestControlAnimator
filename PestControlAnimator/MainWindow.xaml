@@ -22,7 +22,7 @@
                 <MenuItem Header="_New" />
                 <MenuItem Header="_Open..." />
                 <Separator />
-                <MenuItem Header="_Save" />
+                <MenuItem Header="_Save" Click="MenuItem_Click" />
                 <MenuItem Header="Save _As..." />
                 <Separator />
                 <MenuItem Header="E_xit" />
@@ -35,8 +35,6 @@
                 <MenuItem Header="_Copy" />
                 <MenuItem Header="_Paste" />
                 <MenuItem Header="_Delete" />
-                <Separator />
-                <MenuItem Header="Select _All" />
             </MenuItem>
             <MenuItem Header="_Help" Foreground="#BDC3C7" FontWeight="Normal" VerticalAlignment="Center">
                 <MenuItem Header="_About PestControlAnimator" />

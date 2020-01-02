@@ -132,12 +132,19 @@ namespace PestControlAnimator
                 }
             }
 
-            // Update TimeLine scrollbar
-            double viewportSize = (TimeLine.timeLine.TimeLineEnd * TimeLine.timeLine.ScreenScale + 200);
-            if (viewportSize < 0)
+            // Resize timeline so scrolling works
+            int greatestX = 0;
+            foreach(FrameworkElement element in TimeLine.timeLine.TimeLineCanvas.Children)
             {
-                viewportSize = 0;
+                if (Canvas.GetLeft(element) + TimeLine.timeLine.TimeLineEndPadding > greatestX)
+                {
+                    
+                    greatestX = (int)Canvas.GetLeft(element) + TimeLine.timeLine.TimeLineEndPadding;
+                }
             }
+            TimeLine.timeLine.TimeLineCanvas.Width = greatestX;
+            TimeLine.timeLine.TimeLineCanvas.Margin = new Thickness(0, TimeLine.timeLine.TimeLineCanvas.Margin.Top, TimeLine.timeLine.TimeLineCanvas.Margin.Right, TimeLine.timeLine.TimeLineCanvas.Margin.Bottom);
+            TimeLine.timeLine.TimeLineCanvas.HorizontalAlignment = HorizontalAlignment.Left;
 
             // World mouse position, used for transforming wpf mouse coords into coordinates relative to the world and camera.
             worldMousePosition = Vector2.Transform(new Vector2(_mouseX, _mouseY), Matrix.Invert(MainCamera.Transform));
@@ -249,7 +256,7 @@ namespace PestControlAnimator
             {
                 Vector2 newMidPosition = Vector2.Transform(new Vector2((float)e.GetPosition(MainWindow.mainWindow.MainView).X, (float)e.GetPosition(MainWindow.mainWindow.MainView).Y), Matrix.Invert(MainCamera.Transform));
 
-                MainCamera.MoveCamera(new Vector2(-((newMidPosition.X - oldMidPositionWorld.X)/2), -((newMidPosition.Y - oldMidPositionWorld.Y)/2)));
+                MainCamera.MoveCamera(new Vector2(-((newMidPosition.X - oldMidPositionWorld.X)/1.5f), -((newMidPosition.Y - oldMidPositionWorld.Y)/1.5f)));
 
                 oldMidX = (float)e.GetPosition(MainWindow.mainWindow.MainView).X;
                 oldMidY = (float)e.GetPosition(MainWindow.mainWindow.MainView).Y;

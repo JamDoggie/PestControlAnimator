@@ -150,5 +150,10 @@ namespace PestControlAnimator
         {
             MainWindowViewModel.MonogameWindow.MouseWheel(sender, e);
         }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

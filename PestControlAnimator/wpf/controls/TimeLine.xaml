@@ -6,6 +6,8 @@
              xmlns:local="clr-namespace:PestControlAnimator.wpf.controls"
              mc:Ignorable="d" 
              d:DesignHeight="200" d:DesignWidth="800" KeyDown="TimeGrid_KeyDown" Focusable="True">
+
+
     <UserControl.Resources>
         <!--Control colors.-->
         <Color x:Key="WindowColor">#FFE8EDF9</Color>
@@ -101,10 +103,10 @@
                                     <VisualState x:Name="Normal" />
                                     <VisualState x:Name="MouseOver" />
                                     <VisualState x:Name="Pressed">
-                                        
+
                                     </VisualState>
                                     <VisualState x:Name="Disabled">
-                                        
+
                                     </VisualState>
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
@@ -302,7 +304,7 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid Background="#33333d" Name="TimeGrid" MouseMove="TimeGrid_MouseMove" MouseWheel="TimeGrid_MouseWheel"  MouseDown="TimeLineCanvas_MouseDown" MouseUp="TimeLineCanvas_MouseUp" Loaded="TimeGrid_Loaded">
+    <Grid Background="#33333d" Name="TimeGrid" Loaded="TimeGrid_Loaded">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="*"></RowDefinition>
@@ -327,8 +329,8 @@
             
         </StackPanel>
 
-        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Hidden">
-            <Canvas Grid.Row="1" Name="TimeLineCanvas" Loaded="TimeLineCanvas_Loaded" Initialized="TimeLineCanvas_Initialized" SizeChanged="TimeLineCanvas_SizeChanged">
+        <ScrollViewer Name="MainScroller" Grid.Row="1" HorizontalScrollBarVisibility="Visible" Loaded="ScrollViewer_Loaded" VerticalScrollBarVisibility="Hidden" Focusable="True">
+            <Canvas MouseEnter="TimeLineCanvas_MouseEnter" MouseMove="TimeGrid_MouseMove" MouseDown="TimeLineCanvas_MouseDown" MouseUp="TimeLineCanvas_MouseUp" MouseLeave="TimeLineCanvas_MouseLeave" Name="TimeLineCanvas" Focusable="True" Loaded="TimeLineCanvas_Loaded" Initialized="TimeLineCanvas_Initialized" Background="#33333d" SizeChanged="TimeLineCanvas_SizeChanged">
                 <local:TimelineScrubber Height="179" Width="2" Canvas.Left="25" x:Name="Scrubber">
 
                 </local:TimelineScrubber>

@@ -41,6 +41,11 @@ namespace PestControlAnimator.wpf.controls
 
         public static TimeLine timeLine = null;
 
+        // Amount of space to try to leave after the end of the timeline
+        public int TimeLineEndPadding { get; set; } = 200;
+
+        public bool TimeLineEndDragging { get; set; } = false;
+
         public TimeLine()
         {
             InitializeComponent();
@@ -86,13 +91,34 @@ namespace PestControlAnimator.wpf.controls
 
         private void TimeGrid_MouseMove(object sender, MouseEventArgs e)
         {
-            if (e.LeftButton == MouseButtonState.Pressed && CanMoveScrubber)
+            if (e.LeftButton == MouseButtonState.Pressed && CanMoveScrubber && TimeLineCanvas.IsMouseOver && e.GetPosition(MainWindow.mainWindow.MainTimeline).X <= TimeLineEnd * ScreenScale)
             {
-                Canvas.SetLeft(Scrubber, e.GetPosition(MainWindow.mainWindow.MainTimeline).X);
-                TimeLineInfo.timelineMs = ((e.GetPosition(MainWindow.mainWindow.MainTimeline).X) * 16 / ScreenScale) + (GetRealScreenOffset() * 16 / ScreenScale);
+                Canvas.SetLeft(Scrubber, e.GetPosition(MainWindow.mainWindow.MainTimeline).X + MainScroller.HorizontalOffset);
+                TimeLineInfo.timelineMs = ((e.GetPosition(MainWindow.mainWindow.MainTimeline).X) * 16 / ScreenScale) + (MainScroller.HorizontalOffset * 16 / ScreenScale);
             }
 
-            if (e.LeftButton == MouseButtonState.Pressed)
+            // Timeline end is hovered
+            if (e.GetPosition(TimeLineCanvas).X >= (TimeLineEnd * ScreenScale) - 10 && e.GetPosition(TimeLineCanvas).X <= (TimeLineEnd * ScreenScale) + 10)
+            {
+                // Change mouse when hovering over timeline end
+                TimeLineCanvas.Cursor = Cursors.SizeWE;
+            }
+            else
+            {
+                if (!TimeLineEndDragging)
+                    TimeLineCanvas.Cursor = Cursors.Arrow;
+            }
+
+            // Move timeline end
+            if (TimeLineEndDragging)
+            {
+                CanMoveScrubber = false;
+                TimeLineEnd = (int)((e.GetPosition(TimeLineCanvas).X) / ScreenScale);
+                TimeLineCanvas.Cursor = Cursors.SizeWE;
+                DisplayTimelineEnd();
+            }
+
+            if (e.LeftButton == MouseButtonState.Pressed && TimeLineCanvas.IsMouseOver)
             {
                 // Clear sprite boxes from preview and replace them with the last keyframe's spriteboxes or none if there are no keyframes.
                 MainWindowViewModel.MonogameWindow.GetPreviewObject().SetSpriteBoxes(new Dictionary<string, Spritebox>());
@@ -104,7 +130,7 @@ namespace PestControlAnimator.wpf.controls
                 {
                     if (keyFrame.Selected)
                     {
-                        int scrubPos = (int)Math.Floor((e.GetPosition(TimeLineCanvas).X + GetRealScreenOffset()) / ScreenScale);
+                        int scrubPos = (int)Math.Floor((e.GetPosition(MainScroller).X + MainScroller.HorizontalOffset) / ScreenScale);
 
                         bool isFrameAtScrubber = false;
 
@@ -116,7 +142,7 @@ namespace PestControlAnimator.wpf.controls
                             }
                         }
 
-                        if (!isFrameAtScrubber)
+                        if (!isFrameAtScrubber && scrubPos <= TimeLineEnd)
                             keyFrame.PositionX = scrubPos;
 
                         CanMoveScrubber = false;
@@ -149,6 +175,7 @@ namespace PestControlAnimator.wpf.controls
                 TimeLineCanvas.Children.Remove(element);
             }
 
+            // Timeline End
             Rectangle rect = new Rectangle
             {
                 Stroke = new SolidColorBrush(Color.FromRgb(46, 46, 54)),
@@ -156,12 +183,10 @@ namespace PestControlAnimator.wpf.controls
             };
 
             double rectX = TimeLineEnd * ScreenScale - GetRealScreenOffset();
-
-            if (rectX > TimeLineCanvas.ActualWidth)
-                return;
-
-            rect.Width = TimeLineCanvas.ActualWidth - rectX;
-            //rect.Width = 100;
+            double rectWidth = MainScroller.ActualWidth - (rectX + MainScroller.HorizontalOffset);
+            if (rectWidth < 0)
+                rectWidth = TimeLineEndPadding;
+            rect.Width = rectWidth;
             rect.Height = TimeLineCanvas.ActualHeight;
             rect.StrokeThickness = rect.Width;
 
@@ -255,12 +280,19 @@ namespace PestControlAnimator.wpf.controls
         {
             List<UIElement> toRemove = new List<UIElement>();
 
+            bool backFound = false;
+
             // Find what elements are lines and need to be cleared.
             foreach(UIElement element in TimeLineCanvas.Children)
             {
                 if (element is Line)
                 {
                     toRemove.Add(element);
+                }
+
+                if (element is Rectangle && ((Rectangle)element).Name == "timeBackground")
+                {
+                    backFound = true;
                 }
             }
 
@@ -270,12 +302,27 @@ namespace PestControlAnimator.wpf.controls
                 TimeLineCanvas.Children.Remove(element);
             }
 
+            if (!backFound)
+            {
+                Rectangle background = new Rectangle();
+                background.Visibility = Visibility.Visible;
+                background.Width = TimeLineEnd * ScreenScale - GetRealScreenOffset();
+                background.Height = TimeLineCanvas.ActualHeight;
+                background.Stroke = new SolidColorBrush(Color.FromRgb(0, 0, 0));
+                background.StrokeThickness = background.Width * background.Height;
+                background.Name = "timeBackground";
+
+                TimeLineCanvas.Children.Add(background);
+
+                Canvas.SetLeft(background, 0);
+            }
+
             // This makes it so if the screenscale is too small, it won't display a million lines for the keyframe spacing when it's at that point redundant.
             if (ScreenScale < 3.4)
                 return;
 
             // Get how many lines we should render
-            int linesInTimeline = (int)(ActualWidth / ScreenScale) + 1;
+            int linesInTimeline = (int)((TimeLineEnd * ScreenScale - GetRealScreenOffset()) / ScreenScale) + 1;
 
             for(int i = 0; i <= linesInTimeline; i++)
             {
@@ -302,16 +349,19 @@ namespace PestControlAnimator.wpf.controls
             }
         }
 
-        private void TimeGrid_MouseWheel(object sender, MouseWheelEventArgs e)
+        private void TimeGrid_MouseWheel(object sender, RoutedEventArgs evnt)
         {
+            MouseWheelEventArgs e = (MouseWheelEventArgs)evnt;
+
             ScreenScale += e.Delta * 0.005;
-            DrawTimelineSections();
-            DisplayTimelineEnd();
+            
             if (ScreenScale <= 0)
             {
                 ScreenScale = 0.05;
-                
             }
+
+            DrawTimelineSections();
+            DisplayTimelineEnd();
         }
 
         private void TimeLineCanvas_MouseDown(object sender, MouseButtonEventArgs e)
@@ -332,6 +382,11 @@ namespace PestControlAnimator.wpf.controls
             {
                 SelectedKeyframe = -1;
             }
+
+            if (e.GetPosition(TimeLineCanvas).X >= (TimeLineEnd * ScreenScale) - 10 && e.GetPosition(TimeLineCanvas).X <= (TimeLineEnd * ScreenScale) + 10)
+            {
+                TimeLineEndDragging = true;
+            }
         }
 
         private void TimeLineCanvas_MouseUp(object sender, MouseButtonEventArgs e)
@@ -342,6 +397,7 @@ namespace PestControlAnimator.wpf.controls
                 keyFrame.rect3761.Fill = new SolidColorBrush(Color.FromRgb(160, 139, 64));
             }
             CanMoveScrubber = true;
+            TimeLineEndDragging = false;
         }
 
         private void TimeGrid_KeyDown(object sender, KeyEventArgs e)
@@ -433,6 +489,21 @@ namespace PestControlAnimator.wpf.controls
             TimeLineOffset += 10;
             DrawTimelineSections();
             DisplayTimelineEnd();
+        }
+
+        private void TimeLineCanvas_MouseEnter(object sender, MouseEventArgs e)
+        {
+            //TimeLineCanvas.Focus();
+        }
+
+        private void TimeLineCanvas_MouseLeave(object sender, MouseEventArgs e)
+        {
+            TimeLineEndDragging = false;
+        }
+
+        private void ScrollViewer_Loaded(object sender, RoutedEventArgs e)
+        {
+            TimeLineCanvas.AddHandler(MouseWheelEvent, new RoutedEventHandler(TimeGrid_MouseWheel), true);
         }
     }
 }
