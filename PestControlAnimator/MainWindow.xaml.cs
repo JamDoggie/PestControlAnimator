@@ -153,7 +153,7 @@ namespace PestControlAnimator
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-
+            project.SaveProject(project.ProjectPath, this);
         }
     }
 }

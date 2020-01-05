@@ -73,10 +73,16 @@ namespace PestControlAnimator.wpf.controls
             TimeLineCanvas.Children.Remove(keyframe);
         }
 
-        public ref List<Keyframe> GetKeyframes()
+        public List<Keyframe> GetKeyframes()
         {
-            return ref _KeyFrames;
+            return _KeyFrames;
         }
+
+        public void SetKeyframes(List<Keyframe> keyframes)
+        {
+            _KeyFrames = keyframes;
+        }
+
         // Start button
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -114,6 +120,7 @@ namespace PestControlAnimator.wpf.controls
             {
                 CanMoveScrubber = false;
                 TimeLineEnd = (int)((e.GetPosition(TimeLineCanvas).X) / ScreenScale);
+                MainWindow.project.GetProjectInfo().TimelineEnd = TimeLineEnd;
                 TimeLineCanvas.Cursor = Cursors.SizeWE;
                 DisplayTimelineEnd();
             }
@@ -493,7 +500,7 @@ namespace PestControlAnimator.wpf.controls
 
         private void TimeLineCanvas_MouseEnter(object sender, MouseEventArgs e)
         {
-            //TimeLineCanvas.Focus();
+            
         }
 
         private void TimeLineCanvas_MouseLeave(object sender, MouseEventArgs e)

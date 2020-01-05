@@ -11,13 +11,13 @@ namespace PestControlAnimator.shared.animation
     {
         public Animation()
         {
-            spriteBoxes = new List<SpriteboxJson>();
+            spriteBoxes = new Dictionary<string, SpriteboxJson>();
         }
 
         public int timelineX { get; set; }
 
         // This kinda has to be public because it's for json serializing so ignore the CA2227 standard warning in visual studio here.
-        public List<SpriteboxJson> spriteBoxes { get; set; }
+        public Dictionary<string, SpriteboxJson> spriteBoxes { get; set; }
 
         
     }

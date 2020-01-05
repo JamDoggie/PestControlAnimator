@@ -310,23 +310,35 @@
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="7*"></RowDefinition>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Background="#282830" Height="20">
-            <Button Height="20" VerticalAlignment="Top" Click="Button_Click" >
-                Play
-            </Button>
-            <Button Height="20" VerticalAlignment="Top" Click="Button_Click_1">
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Background="#282830">
+
+            <Viewbox>
+                <Button Click="Button_Click" >
+                    Play
+                </Button>
+            </Viewbox>
+
+
+            <Viewbox>
+                <Button Click="Button_Click_1">
                 Stop
-            </Button>
-            <Button Click="Button_Click_2">
-                Keyframe
-            </Button>
-            <Button Click="Button_Click_3">
-                Left
-            </Button>
-            <Button Click="Button_Click_4">
-                Right
-            </Button>
-            
+                </Button>
+            </Viewbox>
+            <Viewbox>
+                <Button Click="Button_Click_2">
+                    Keyframe
+                </Button>
+            </Viewbox>
+            <Viewbox>
+                <Button Click="Button_Click_3">
+                    Left
+                </Button>
+            </Viewbox>
+            <Viewbox>
+                <Button Click="Button_Click_4">
+                    Right
+                </Button>
+            </Viewbox>
         </StackPanel>
 
         <ScrollViewer Name="MainScroller" Grid.Row="1" HorizontalScrollBarVisibility="Visible" Loaded="ScrollViewer_Loaded" VerticalScrollBarVisibility="Hidden" Focusable="True">

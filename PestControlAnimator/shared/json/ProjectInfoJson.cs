@@ -21,6 +21,8 @@ namespace PestControlAnimator.shared.json
 
         public int LoopToFrame { get; set; }
 
+        public int TimelineEnd { get; set; } = 10;
+
         public List<Animation> animations { get; set; }
     }
 }

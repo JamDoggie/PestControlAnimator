@@ -1,7 +1,11 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using PestControlAnimator.monogame.content;
+using PestControlAnimator.monogame.objects;
+using PestControlAnimator.shared.animation;
+using PestControlAnimator.shared.animation.json;
 using PestControlAnimator.shared.json;
+using PestControlAnimator.wpf.controls;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -64,6 +68,46 @@ namespace PestControlAnimator.shared
                     }
                 }
             }
+        }
+
+        private void SaveJSON(ProjectInfoJson projectInfo, string path)
+        {
+            string output = JsonConvert.SerializeObject(projectInfo);
+
+            File.WriteAllText(path, output);
+        }
+
+        public void SaveProject(string path, MainWindow window)
+        {
+            if (window == null)
+                return;
+
+            TimeLine TimeLine = window.MainTimeline;
+
+            ProjectInfoJson projectInfo = GetProjectInfo();
+
+            foreach (Keyframe keyFrame in TimeLine.GetKeyframes())
+            {
+                Dictionary<string, SpriteboxJson> spriteBoxes = new Dictionary<string, SpriteboxJson>();
+
+                foreach(KeyValuePair<string, Spritebox> spr in keyFrame.GetSpriteBoxes())
+                {
+                    spriteBoxes.Add(spr.Key, Spritebox.ToJsonElement(spr.Value));
+                }
+
+                Animation animation = new Animation
+                {
+                    timelineX = keyFrame.PositionX,
+                    spriteBoxes = spriteBoxes
+                };
+
+                projectInfo.animations.Add(animation);
+            }
+
+            projectInfo.TimelineEnd = TimeLine.TimeLineEnd;
+            projectInfo.ProjectSaveIncrement += 1;
+
+            SaveJSON(projectInfo, path);
         }
     }
 }

@@ -67,6 +67,9 @@ namespace PestControlAnimator
             SpriteManager.GetSprites().Add(Grid);
 
             gridTexture = Content.Load<Texture2D>("grid");
+
+
+            TimeLine.timeLine.DisplayAtScrubber();
         }
 
         public override void LoadContent()
@@ -75,6 +78,8 @@ namespace PestControlAnimator
             _guiBatch = new SpriteBatch(GraphicsDevice);
 
             DefaultFont = Content.Load<SpriteFont>("DefaultFont");
+
+
         }
 
         public override void UnloadContent()
