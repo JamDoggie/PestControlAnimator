@@ -373,8 +373,8 @@ namespace PestControlAnimator
 
         public void AddPreviewSpriteBox(Spritebox spriteBox)
         {
-            previewObject.GetSpriteBoxes().Add($"{spriteboxesCreated}", spriteBox);
-            spriteboxesCreated++;
+            previewObject.GetSpriteBoxes().Add($"{previewObject.GetSpriteBoxes().Count}", spriteBox);
+            
         }
 
         public void RemovePreviewSpriteBox(Spritebox spriteBox)

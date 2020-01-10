@@ -84,7 +84,9 @@ namespace PestControlAnimator.shared
 
             TimeLine TimeLine = window.MainTimeline;
 
-            ProjectInfoJson projectInfo = GetProjectInfo();
+            ProjectInfoJson projectInfo = GetProjectInfo(); 
+
+            projectInfo.animations.Clear();
 
             foreach (Keyframe keyFrame in TimeLine.GetKeyframes())
             {

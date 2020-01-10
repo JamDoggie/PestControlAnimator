@@ -55,7 +55,6 @@ namespace PestControlAnimator.wpf.controls
             Scrubber.Width = 2;
             Canvas.SetLeft(Scrubber, -1);
             Canvas.SetTop(Scrubber, 0);
-            //var boolean = Mouse.Capture(this);
         }
 
         public void AddKeyframe(Keyframe keyframe)
@@ -120,7 +119,6 @@ namespace PestControlAnimator.wpf.controls
             {
                 CanMoveScrubber = false;
                 TimeLineEnd = (int)((e.GetPosition(TimeLineCanvas).X) / ScreenScale);
-                MainWindow.project.GetProjectInfo().TimelineEnd = TimeLineEnd;
                 TimeLineCanvas.Cursor = Cursors.SizeWE;
                 DisplayTimelineEnd();
             }
@@ -262,11 +260,6 @@ namespace PestControlAnimator.wpf.controls
 
                 MainWindowViewModel.MonogameWindow.GetPreviewObject().SetSpriteBoxes(sprBoxes);
             }
-                
-            foreach(Keyframe frame in _KeyFrames)
-            {
-                Console.WriteLine(_KeyFrames.IndexOf(frame) + "_" + frame.GetSpriteBoxes().Count + "_" + closestKeyframeTo);
-            }
         }
 
         public double GetRealScreenOffset()
@@ -373,8 +366,6 @@ namespace PestControlAnimator.wpf.controls
 
         private void TimeLineCanvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            Console.WriteLine(SelectedKeyframe + " now");
-
             bool isKeyframeHovered = false;
 
             foreach(Keyframe keyFrame in _KeyFrames)
@@ -390,7 +381,7 @@ namespace PestControlAnimator.wpf.controls
                 SelectedKeyframe = -1;
             }
 
-            if (e.GetPosition(TimeLineCanvas).X >= (TimeLineEnd * ScreenScale) - 10 && e.GetPosition(TimeLineCanvas).X <= (TimeLineEnd * ScreenScale) + 10)
+            if (e.GetPosition(TimeLineCanvas).X >= (TimeLineEnd * ScreenScale) - 10 && e.GetPosition(TimeLineCanvas).X <= (TimeLineEnd * ScreenScale) + 10 && TimeLineCanvas.IsMouseOver)
             {
                 TimeLineEndDragging = true;
             }
@@ -405,6 +396,8 @@ namespace PestControlAnimator.wpf.controls
             }
             CanMoveScrubber = true;
             TimeLineEndDragging = false;
+
+            Console.WriteLine("mouse up");
         }
 
         private void TimeGrid_KeyDown(object sender, KeyEventArgs e)

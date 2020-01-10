@@ -47,7 +47,8 @@
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="5*" />
-                <RowDefinition Height="*" />
+                <RowDefinition Height="4*" />
+                <RowDefinition Height="2*" />
             </Grid.RowDefinitions>
 
             <ListView Name="ProjectView" MouseMove="ProjectView_MouseMove">
@@ -69,8 +70,9 @@
                 </ListView.View>
             </ListView>
 
-            <monoGameControls:MonoGameContentControl x:Name="MainView" Grid.Column="1" MouseEnter="MonoGameContentControl_MouseEnter" MouseLeave="MonoGameContentControl_MouseLeave" MouseDown="MonoGameContentControl_MouseDown" MouseUp="MonoGameContentControl_MouseUp" MouseMove="MonoGameContentControl_MouseMove" DragEnter="MainView_DragEnter" Drop="MainView_Drop" MouseWheel="MainView_MouseWheel" Focusable="True"/>
-            <pestControls:TimeLine Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" x:Name="MainTimeline" ></pestControls:TimeLine>
+            <monoGameControls:MonoGameContentControl x:Name="MainView" Grid.Column="1" Grid.RowSpan="2" MouseEnter="MonoGameContentControl_MouseEnter" MouseLeave="MonoGameContentControl_MouseLeave" MouseDown="MonoGameContentControl_MouseDown" MouseUp="MonoGameContentControl_MouseUp" MouseMove="MonoGameContentControl_MouseMove" DragEnter="MainView_DragEnter" Drop="MainView_Drop" MouseWheel="MainView_MouseWheel" Focusable="True"/>
+            <pestControls:TimeLine Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3" x:Name="MainTimeline" ></pestControls:TimeLine>
+            <pestControls:PropertiesWindow Grid.Row="1"></pestControls:PropertiesWindow>
         </Grid>
     </DockPanel>
 </Window>
