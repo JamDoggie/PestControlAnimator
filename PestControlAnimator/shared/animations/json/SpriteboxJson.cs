@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PestControlAnimator.shared.animation.json
+namespace PestControlAnimator.shared.animations.json
 {
     public class SpriteboxJson
     {
@@ -27,5 +27,7 @@ namespace PestControlAnimator.shared.animation.json
         public int sourceHeight { get; set; }
 
         public string textureKey { get; set; }
+
+        public float layer { get; set; }
     }
 }

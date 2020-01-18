@@ -2,8 +2,8 @@
 using Newtonsoft.Json;
 using PestControlAnimator.monogame.content;
 using PestControlAnimator.monogame.objects;
-using PestControlAnimator.shared.animation;
-using PestControlAnimator.shared.animation.json;
+using PestControlAnimator.shared.animations;
+using PestControlAnimator.shared.animations.json;
 using PestControlAnimator.shared.json;
 using PestControlAnimator.wpf.controls;
 using System;
@@ -99,7 +99,7 @@ namespace PestControlAnimator.shared
 
                 Animation animation = new Animation
                 {
-                    timelineX = keyFrame.PositionX,
+                    timelineX = keyFrame.PositionX, 
                     spriteBoxes = spriteBoxes
                 };
 

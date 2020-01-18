@@ -4,8 +4,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using PestControlAnimator.monogame.content;
 using PestControlAnimator.monogame.objects;
-using PestControlAnimator.shared.animation;
-using PestControlAnimator.shared.animation.json;
+using PestControlAnimator.shared.animations;
+using PestControlAnimator.shared.animations.json;
 using PestControlAnimator.shared.json;
 using PestControlAnimator.wpf.controls;
 using System;
@@ -117,8 +117,7 @@ namespace PestControlAnimator.wpf.windows
                     {
                         SpriteboxJson spritebox = pair.Value;
 
-                        spriteBoxes.Add(pair.Key, new Spritebox(new Vector2((float)spritebox.posX, (float)spritebox.posY), spritebox.width, spritebox.height, spritebox.rotation, 
-                            pair.Value.textureKey, new Rectangle(spritebox.sourceX, spritebox.sourceY, spritebox.sourceWidth, spritebox.sourceHeight), null));
+                        spriteBoxes.Add(pair.Key, Spritebox.FromJsonElement(spritebox));
                     }
 
                     TimeLine.timeLine.AddKeyframe(new Keyframe(animation.timelineX, 0, spriteBoxes, TimeLine.timeLine));

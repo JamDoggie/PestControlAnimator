@@ -69,9 +69,9 @@ namespace PestControlAnimator.monogame.objects
             {
                 Zoom = .35f;
             }
-            if (Zoom > 2f)
+            if (Zoom > 10f)
             {
-                Zoom = 2f;
+                Zoom = 10f;
             }
         }
 

@@ -31,17 +31,15 @@ namespace PestControlAnimator.monogame.objects
         /// <param name="spriteBatch"></param>
         public virtual void Draw(GraphicsDevice device, SpriteBatch spriteBatch)
         {
-            foreach (KeyValuePair<string, Spritebox> pair in SpriteBoxes)
+            var orderedSprites = SpriteBoxes.OrderBy(f => f.Value.GetLayer()).ToList();
+
+            foreach (KeyValuePair<string, Spritebox> pair in orderedSprites)
             {
                 Spritebox spriteBox = pair.Value;
 
                 if (spriteBatch != null && ContentManager.GetTexture(spriteBox.GetTextureKey()) != null)
                 {
                     spriteBatch.Draw(ContentManager.GetTexture(spriteBox.GetTextureKey()), new Rectangle((int)(spriteBox.GetPosition().X + GetPosition().X), (int)(spriteBox.GetPosition().Y + GetPosition().Y), spriteBox.GetWidth(), spriteBox.GetHeight()), spriteBox.GetSourceRectangle(), Color.White);
-                }
-                else
-                {
-                    throw new ArgumentNullException(nameof(spriteBatch));
                 }
             }
             

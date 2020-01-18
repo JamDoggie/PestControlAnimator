@@ -15,14 +15,22 @@
 
         </Canvas>
 
-        <TabControl Grid.Row="1" Background="#2f2f38" BorderThickness="0">
-            <TabItem Header="Sprite Properties">
-                <Canvas Background="#2f2f38" Loaded="Canvas_Loaded" SizeChanged="Canvas_SizeChanged">
-
-                </Canvas>
+        <TabControl Grid.Row="1" Name="MainTabControl" Background="#2f2f38" BorderThickness="0">
+            <TabItem Header="Sprite Properties" Name="SpriteProperties">
+                <ScrollViewer Name="SpriteScroller" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden">
+                    <Canvas Name="SpritePropertiesCanvas" Background="#2f2f38" SizeChanged="Canvas_SizeChanged">
+                        
+                    </Canvas>
+                </ScrollViewer>
             </TabItem>
 
             <TabItem Header="Project Properties">
+                <Grid Background="#292930">
+
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Current Sprite Tree">
                 <Grid Background="#292930">
 
                 </Grid>

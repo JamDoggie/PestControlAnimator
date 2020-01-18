@@ -1,4 +1,4 @@
-﻿using PestControlAnimator.shared.animation;
+﻿using PestControlAnimator.shared.animations;
 using System;
 using System.Collections.Generic;
 using System.Linq;

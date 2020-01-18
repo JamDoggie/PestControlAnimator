@@ -1,11 +1,16 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Microsoft.Win32;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using PestControlAnimator.monogame.content;
 using PestControlAnimator.monogame.objects;
 using PestControlAnimator.shared;
+using PestControlAnimator.shared.animations;
+using PestControlAnimator.shared.animations.json;
+using PestControlAnimator.wpf.controls;
 using PestControlAnimator.wpf.structs;
 using PestControlAnimator.wpf.windows;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -142,7 +147,7 @@ namespace PestControlAnimator
                 Texture2D tex = ContentManager.GetTexture(safeFileName);
 
                 if (info.Extension == ".png" && tex != null)
-                    MainWindowViewModel.MonogameWindow.AddPreviewSpriteBox(new Spritebox(new Vector2(0, 0), tex.Width, tex.Height, 0, safeFileName, new Rectangle(0, 0, tex.Width, tex.Height), MainWindowViewModel.MonogameWindow.GetPreviewObject()));
+                    MainWindowViewModel.MonogameWindow.AddPreviewSpriteBox(new Spritebox(new Vector2(0, 0), tex.Width, tex.Height, 0, safeFileName, 0, new Rectangle(0, 0, tex.Width, tex.Height), MainWindowViewModel.MonogameWindow.GetPreviewObject()));
             }
         }
 
@@ -154,6 +159,74 @@ namespace PestControlAnimator
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             project.SaveProject(project.ProjectPath, this);
+        }
+
+        private void MainView_KeyDown(object sender, KeyEventArgs e)
+        {
+            MainWindowViewModel.MonogameWindow.KeyDown(sender, e);
+        }
+
+        // Export As...
+        private void MenuItem_Click_1(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog fileDialog = new SaveFileDialog();
+            fileDialog.Filter = "Pest Control Animation File (*.pcaf)|*.pcaf|All files (*.*)|*.*";
+
+            if (fileDialog.ShowDialog() == true)
+            {
+                Animation.WriteAnimationFile(fileDialog.FileName, project);
+            }
+        }
+
+        // Import (Mainly for PCAF files.)
+        private void MenuItem_Click_2(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog fileDialog = new OpenFileDialog();
+            fileDialog.Filter = "Pest Control Animation File (*.pcaf)|*.pcaf|All files (*.*)|*.*";
+
+            if (fileDialog.ShowDialog() == true)
+            {
+                Animation.ReadAnimationFile(fileDialog.FileName, project, MainTimeline);
+            }
+        }
+
+        private void MenuItem_Click_3(object sender, RoutedEventArgs e)
+        {
+            // Open project
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "PestControl Engine Animation Project (*.animproj)|*.animproj|All files (*.*)|*.*";
+            if (openFileDialog.ShowDialog() == true)
+            {
+                Stream projectStream;
+
+                if ((projectStream = openFileDialog.OpenFile()) != null)
+                {
+                    project.ProjectPath = $"{openFileDialog.FileName}";
+                    projectStream.Dispose();
+                }
+
+                TimeLine.timeLine.ClearKeyframes();
+
+                foreach (Animation animation in project.GetProjectInfo().animations)
+                {
+                    Dictionary<string, Spritebox> spriteBoxes = new Dictionary<string, Spritebox>();
+
+                    foreach (KeyValuePair<string, SpriteboxJson> pair in animation.spriteBoxes)
+                    {
+                        SpriteboxJson spritebox = pair.Value;
+
+                        spriteBoxes.Add(pair.Key, Spritebox.FromJsonElement(spritebox));
+                    }
+
+                    TimeLine.timeLine.AddKeyframe(new Keyframe(animation.timelineX, 0, spriteBoxes, TimeLine.timeLine));
+                }
+
+                TimeLine.timeLine.TimeLineEnd = project.GetProjectInfo().TimelineEnd;
+
+                TimeLine.timeLine.DisplayAtScrubber();
+                TimeLine.timeLine.DisplayTimelineEnd();
+                Properties.UpdateFields();
+            }
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using PestControlAnimator.monogame.objects;
 using PestControlAnimator.shared;
-using PestControlAnimator.shared.animation;
-using PestControlAnimator.shared.animation.json;
+using PestControlAnimator.shared.animations;
+using PestControlAnimator.shared.animations.json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -71,10 +71,30 @@ namespace PestControlAnimator.wpf.controls
             _KeyFrames.Remove(keyframe);
             TimeLineCanvas.Children.Remove(keyframe);
         }
-
-        public List<Keyframe> GetKeyframes()
+        
+        public void ClearKeyframes()
         {
-            return _KeyFrames;
+            List<UIElement> toRemove = new List<UIElement>();
+
+            foreach(UIElement element in TimeLineCanvas.Children)
+            {
+                if (element is Keyframe)
+                {
+                    toRemove.Add(element);
+                }
+            }
+
+            foreach(UIElement element in toRemove)
+            {
+                TimeLineCanvas.Children.Remove(element);
+            }
+
+            _KeyFrames.Clear();
+        }
+
+        public ref List<Keyframe> GetKeyframes()
+        {
+            return ref _KeyFrames;
         }
 
         public void SetKeyframes(List<Keyframe> keyframes)
@@ -100,6 +120,7 @@ namespace PestControlAnimator.wpf.controls
             {
                 Canvas.SetLeft(Scrubber, e.GetPosition(MainWindow.mainWindow.MainTimeline).X + MainScroller.HorizontalOffset);
                 TimeLineInfo.timelineMs = ((e.GetPosition(MainWindow.mainWindow.MainTimeline).X) * 16 / ScreenScale) + (MainScroller.HorizontalOffset * 16 / ScreenScale);
+                MainWindow.mainWindow.Properties.UpdateFields();
             }
 
             // Timeline end is hovered
@@ -209,6 +230,8 @@ namespace PestControlAnimator.wpf.controls
         {
             int closestKeyframeTo = -1;
             int closestKeyframeDistance = -1;
+
+            MainWindowViewModel.MonogameWindow.setSprBoxSelected("enginereserved_null");
 
             if (_KeyFrames.Count > 0)
             {

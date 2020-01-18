@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PestControlAnimator.shared.animation
+namespace PestControlAnimator.shared.animations
 {
     public static class TimeLineInfo
     {

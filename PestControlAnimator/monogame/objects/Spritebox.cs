@@ -3,7 +3,7 @@
  */
 
 using Microsoft.Xna.Framework;
-using PestControlAnimator.shared.animation.json;
+using PestControlAnimator.shared.animations.json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +24,9 @@ namespace PestControlAnimator.monogame.objects
         private float _rotation = 0.0f;
         private string _textureKey = "";
         private Drawable _parent = null;
-        public Spritebox(Vector2 position, int width, int height, float rotation, string textureKey, Rectangle sourceRectangle, Drawable parent)
+        private float _layer = 0;
+
+        public Spritebox(Vector2 position, int width, int height, float rotation, string textureKey, float layer, Rectangle sourceRectangle, Drawable parent)
         {
             _position = position;
             _width = width;
@@ -33,6 +35,7 @@ namespace PestControlAnimator.monogame.objects
             _textureKey = textureKey;
             _sourceRectangle = sourceRectangle;
             _parent = parent;
+            _layer = layer;
         }
 
         public Vector2 GetPosition()
@@ -73,6 +76,11 @@ namespace PestControlAnimator.monogame.objects
         public Rectangle GetRectangle()
         {
             return new Rectangle((int)_position.X, (int)_position.Y, _width, _height);
+        }
+
+        public float GetLayer()
+        {
+            return _layer;
         }
 
         public void SetRectangle(Rectangle rectangle)
@@ -119,7 +127,8 @@ namespace PestControlAnimator.monogame.objects
                 sourceWidth = spriteBox.GetSourceRectangle().Width,
                 sourceX = spriteBox.GetSourceRectangle().X,
                 sourceY = spriteBox.GetSourceRectangle().Y,
-                textureKey = spriteBox.GetTextureKey()
+                textureKey = spriteBox.GetTextureKey(),
+                layer = spriteBox.GetLayer()
             };
 
             return sprBoxJson;
@@ -131,8 +140,8 @@ namespace PestControlAnimator.monogame.objects
                 return null;
 
             Spritebox sprBox = new Spritebox(new Vector2((float)spriteBoxJson.posX, (float)spriteBoxJson.posY), spriteBoxJson.width, spriteBoxJson.height, spriteBoxJson.rotation, 
-                spriteBoxJson.textureKey, new Rectangle(spriteBoxJson.sourceX, spriteBoxJson.sourceY, spriteBoxJson.sourceWidth, spriteBoxJson.sourceHeight), 
-                MainWindowViewModel.MonogameWindow.GetPreviewObject());
+                spriteBoxJson.textureKey, spriteBoxJson.layer, new Rectangle(spriteBoxJson.sourceX, spriteBoxJson.sourceY, spriteBoxJson.sourceWidth, spriteBoxJson.sourceHeight), 
+                null);
 
             return sprBox;
         }

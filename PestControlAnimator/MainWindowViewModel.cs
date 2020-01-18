@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -9,7 +10,7 @@ using PestControlAnimator.monogame.graphicspipeline;
 using PestControlAnimator.monogame.objects;
 using PestControlAnimator.MonoGameControls;
 using PestControlAnimator.shared;
-using PestControlAnimator.shared.animation;
+using PestControlAnimator.shared.animations;
 using PestControlAnimator.wpf.controls;
 
 namespace PestControlAnimator
@@ -47,6 +48,8 @@ namespace PestControlAnimator
 
         Texture2D gridTexture;
         public SpriteFont DefaultFont { get; set; }
+
+        private bool _shouldUpdateProperties = false;
 
         public override void Initialize()
         {
@@ -179,17 +182,48 @@ namespace PestControlAnimator
                     if (pair.Key == sprBoxSelected)
                     {
                         selectionBox.SetBoundObject(pair.Value);
+                        if (_shouldUpdateProperties)
+                        {
+                            MainWindow.mainWindow.Properties.UpdateFields();
+                            _shouldUpdateProperties = false;
+                        }
                     }
                 }
             }
             else
             {
                 selectionBox.SetBoundObject(null);
+                if (_shouldUpdateProperties)
+                {
+                    MainWindow.mainWindow.Properties.UpdateFields();
+                    _shouldUpdateProperties = false;
+                }
             }
             MainCamera.UpdateCamera(GraphicsDevice.Viewport);
         }
 
-       
+        public void KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete)
+            {
+                if (sprBoxSelected != "enginereserved_null")
+                {
+                    int keyFrameIndex = 0;
+
+                    for (int i = 0; i < TimeLine.timeLine.GetKeyframes().Count; i++)
+                    {
+                        if (i == GetNearestKeyframe())
+                        {
+                            keyFrameIndex = i;
+                        }
+                    }
+                    
+                    TimeLine.timeLine.GetKeyframes()[keyFrameIndex].GetSpriteBoxes().Remove(sprBoxSelected);
+
+                    TimeLine.timeLine.DisplayAtScrubber();
+                }
+            }
+        }
 
         public override void Draw(GameTime gameTime)
         {
@@ -213,6 +247,52 @@ namespace PestControlAnimator
             }
         }
 
+        public static int GetNearestKeyframe()
+        {
+            int closestKeyframeTo = -1;
+            int closestKeyframeDistance = -1;
+
+            if (TimeLine.timeLine.GetKeyframes().Count > 0)
+            {
+                for (int i = 0; i < TimeLine.timeLine.GetKeyframes().Count; i++)
+                {
+                    int scrubberPos = (int)Math.Floor(TimeLineInfo.timelineMs / 16);
+                    Keyframe currentFrame = TimeLine.timeLine.GetKeyframes().ElementAt(i);
+
+                    bool isValid = true;
+
+                    if (currentFrame.PositionX > scrubberPos)
+                    {
+
+                        isValid = false;
+                    }
+
+                    if (isValid)
+                    {
+                        if (closestKeyframeDistance == -1)
+                        {
+                            closestKeyframeDistance = Math.Abs(scrubberPos - TimeLine.timeLine.GetKeyframes().ElementAt(i).PositionX);
+                            closestKeyframeTo = i;
+                        }
+                        else
+                        {
+                            if (Math.Abs(scrubberPos - TimeLine.timeLine.GetKeyframes().ElementAt(i).PositionX) < closestKeyframeDistance)
+                            {
+                                closestKeyframeDistance = Math.Abs(scrubberPos - TimeLine.timeLine.GetKeyframes().ElementAt(i).PositionX);
+                                closestKeyframeTo = i;
+                            }
+                        }
+                    }
+                }
+            }
+            return closestKeyframeTo;
+        }
+
+        public string GetSelectedSpriteboxKey()
+        {
+            return sprBoxSelected;
+        }
+
         float oldMidX = 0;
         float oldMidY = 0;
 
@@ -230,7 +310,7 @@ namespace PestControlAnimator
                 _mouseY = (float)e.GetPosition(MainWindow.mainWindow.MainView).Y;
 
                 worldMousePosition = Vector2.Transform(new Vector2(_mouseX, _mouseY), Matrix.Invert(MainCamera.Transform));
-
+                worldMousePosition = new Vector2((int)worldMousePosition.X, (int)worldMousePosition.Y);
                 // Moving selected object
                 if (sprBoxSelected != "enginereserved_null")
                 {
@@ -298,6 +378,7 @@ namespace PestControlAnimator
                     }
                 }
 
+                
                 // Object moving initialization
                 Spritebox sprBox;
                 previewObject.GetSpriteBoxes().TryGetValue(sprBoxSelected, out sprBox);
@@ -321,6 +402,8 @@ namespace PestControlAnimator
                 {
                     drawable.MouseDown(sender, e, worldMousePosition);
                 }
+
+                _shouldUpdateProperties = true;
             }
                 
 
@@ -331,18 +414,17 @@ namespace PestControlAnimator
                 oldMidY = (float)e.GetPosition(MainWindow.mainWindow.MainView).Y;
                 oldMidPositionWorld = Vector2.Transform(new Vector2(oldMidX, oldMidY), Matrix.Invert(MainCamera.Transform));
             }
-                
         }
 
         public void MouseWheel(object sender, MouseWheelEventArgs e)
         {
             if (e.Delta > 0)
             {
-                MainCamera.Zoom += 0.2f;
+                MainCamera.AdjustZoom(0.2f);
             }
             if (e.Delta < 0)
             {
-                MainCamera.Zoom -= 0.2f;
+                MainCamera.AdjustZoom(-0.2f);
             }
         }
         public void MouseUp(object sender, MouseEventArgs e)
@@ -400,6 +482,11 @@ namespace PestControlAnimator
         public void setSprBoxSelected(string str)
         {
             sprBoxSelected = str;
+        }
+
+        public SelectionBox GetSelectionBox()
+        {
+            return selectionBox;
         }
     }
 }

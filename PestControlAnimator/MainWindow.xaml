@@ -20,10 +20,12 @@
         <Menu DockPanel.Dock="Top" Background="#33333d">
             <MenuItem Header="_File" Foreground="#BDC3C7" FontWeight="Normal" VerticalAlignment="Center">
                 <MenuItem Header="_New" />
-                <MenuItem Header="_Open..." />
+                <MenuItem Header="_Open..." Click="MenuItem_Click_3"/>
                 <Separator />
                 <MenuItem Header="_Save" Click="MenuItem_Click" />
                 <MenuItem Header="Save _As..." />
+                <MenuItem Header="_Export As..." Click="MenuItem_Click_1" />
+                <MenuItem Header="_Import" Click="MenuItem_Click_2" />
                 <Separator />
                 <MenuItem Header="E_xit" />
             </MenuItem>
@@ -42,8 +44,9 @@
         </Menu>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="23*" />
+                <ColumnDefinition Width="175*"/>
+                <ColumnDefinition Width="594*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="5*" />
@@ -51,7 +54,7 @@
                 <RowDefinition Height="2*" />
             </Grid.RowDefinitions>
 
-            <ListView Name="ProjectView" MouseMove="ProjectView_MouseMove">
+            <ListView Name="ProjectView" MouseMove="ProjectView_MouseMove" Grid.ColumnSpan="2">
                 <ListView.Resources>
                     <DataTemplate x:Key="IconTemplate">
                         <Grid>
@@ -70,9 +73,9 @@
                 </ListView.View>
             </ListView>
 
-            <monoGameControls:MonoGameContentControl x:Name="MainView" Grid.Column="1" Grid.RowSpan="2" MouseEnter="MonoGameContentControl_MouseEnter" MouseLeave="MonoGameContentControl_MouseLeave" MouseDown="MonoGameContentControl_MouseDown" MouseUp="MonoGameContentControl_MouseUp" MouseMove="MonoGameContentControl_MouseMove" DragEnter="MainView_DragEnter" Drop="MainView_Drop" MouseWheel="MainView_MouseWheel" Focusable="True"/>
-            <pestControls:TimeLine Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3" x:Name="MainTimeline" ></pestControls:TimeLine>
-            <pestControls:PropertiesWindow Grid.Row="1"></pestControls:PropertiesWindow>
+            <monoGameControls:MonoGameContentControl x:Name="MainView" Grid.Column="2" Grid.RowSpan="2" MouseEnter="MonoGameContentControl_MouseEnter" MouseLeave="MonoGameContentControl_MouseLeave" MouseDown="MonoGameContentControl_MouseDown" MouseUp="MonoGameContentControl_MouseUp" MouseMove="MonoGameContentControl_MouseMove" DragEnter="MainView_DragEnter" Drop="MainView_Drop" MouseWheel="MainView_MouseWheel" Focusable="True"/>
+            <pestControls:TimeLine Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3" x:Name="MainTimeline" KeyDown="MainView_KeyDown"></pestControls:TimeLine>
+            <pestControls:PropertiesWindow x:Name="Properties"  Grid.Row="1" Grid.ColumnSpan="2"></pestControls:PropertiesWindow>
         </Grid>
     </DockPanel>
 </Window>

@@ -56,9 +56,9 @@ namespace PestControlAnimator.wpf.controls
             rect3761.Fill = new SolidColorBrush(Color.FromRgb(160, 139, 64));
         }
 
-        public Dictionary<string, Spritebox> GetSpriteBoxes()
+        public ref Dictionary<string, Spritebox> GetSpriteBoxes()
         {
-            return _SpriteBoxes;
+            return ref _SpriteBoxes;
         }
 
         private void rect3761_MouseMove(object sender, MouseEventArgs e)
@@ -75,6 +75,17 @@ namespace PestControlAnimator.wpf.controls
         private void rect3761_MouseUp(object sender, MouseButtonEventArgs e)
         {
             
+        }
+
+        public void RemoveSpriteBox(string key)
+        {
+            _SpriteBoxes.Remove(key);
+        }
+
+        public void AddSpriteBox(string key, Spritebox spriteBox)
+        {
+            if (!_SpriteBoxes.ContainsKey(key))
+                _SpriteBoxes.Add(key, spriteBox);
         }
     }
 }
