@@ -372,7 +372,7 @@ namespace PestControlAnimator
                 {
                     Rectangle selectionRect = new Rectangle(pair.Value.GetRectangle().X + (int)previewObject.GetPosition().X, pair.Value.GetRectangle().Y + (int)previewObject.GetPosition().Y, pair.Value.GetWidth(), pair.Value.GetHeight());
 
-                    if (selectionRect.Intersects(new Rectangle((int)worldMousePosition.X, (int)worldMousePosition.Y, 1, 1)) && pair.Key != sprBoxSelected)
+                    if (selectionRect.Intersects(new Rectangle((int)worldMousePosition.X, (int)worldMousePosition.Y, 1, 1)) && pair.Key != sprBoxSelected && pair.Value.Visible())
                     {
                         sprBoxSelected = pair.Key;
                     }

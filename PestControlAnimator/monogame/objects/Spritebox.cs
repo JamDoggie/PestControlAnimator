@@ -25,6 +25,7 @@ namespace PestControlAnimator.monogame.objects
         private string _textureKey = "";
         private Drawable _parent = null;
         private float _layer = 0;
+        private bool _isVisible = true;
 
         public Spritebox(Vector2 position, int width, int height, float rotation, string textureKey, float layer, Rectangle sourceRectangle, Drawable parent)
         {
@@ -111,6 +112,16 @@ namespace PestControlAnimator.monogame.objects
             _position = position;
         }
 
+        public void SetVisible(bool visible)
+        {
+            _isVisible = visible;
+        }
+
+        public bool Visible()
+        {
+            return _isVisible;
+        }
+
         public static SpriteboxJson ToJsonElement(Spritebox spriteBox)
         {
             if (spriteBox == null)
@@ -128,7 +139,8 @@ namespace PestControlAnimator.monogame.objects
                 sourceX = spriteBox.GetSourceRectangle().X,
                 sourceY = spriteBox.GetSourceRectangle().Y,
                 textureKey = spriteBox.GetTextureKey(),
-                layer = spriteBox.GetLayer()
+                layer = spriteBox.GetLayer(),
+                visible = spriteBox.Visible()
             };
 
             return sprBoxJson;
@@ -142,6 +154,7 @@ namespace PestControlAnimator.monogame.objects
             Spritebox sprBox = new Spritebox(new Vector2((float)spriteBoxJson.posX, (float)spriteBoxJson.posY), spriteBoxJson.width, spriteBoxJson.height, spriteBoxJson.rotation, 
                 spriteBoxJson.textureKey, spriteBoxJson.layer, new Rectangle(spriteBoxJson.sourceX, spriteBoxJson.sourceY, spriteBoxJson.sourceWidth, spriteBoxJson.sourceHeight), 
                 null);
+            sprBox.SetVisible(spriteBoxJson.visible);
 
             return sprBox;
         }

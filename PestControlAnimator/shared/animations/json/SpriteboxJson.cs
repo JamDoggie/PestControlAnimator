@@ -29,5 +29,7 @@ namespace PestControlAnimator.shared.animations.json
         public string textureKey { get; set; }
 
         public float layer { get; set; }
+
+        public bool visible { get; set; } = true;
     }
 }

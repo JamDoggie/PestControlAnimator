@@ -84,6 +84,7 @@ namespace PestControlAnimator.shared.animations
                     binaryWriter.Write(spriteBox.sourceWidth);
                     binaryWriter.Write(spriteBox.sourceHeight);
                     binaryWriter.Write(spriteBox.layer);
+                    binaryWriter.Write(spriteBox.visible);
                 }
             }
 
@@ -154,6 +155,7 @@ namespace PestControlAnimator.shared.animations
                         int sourceWidth = binaryReader.ReadInt32();
                         int sourceHeight = binaryReader.ReadInt32();
                         float layer = binaryReader.ReadSingle();
+                        bool visible = binaryReader.ReadBoolean();
 
                         SpriteboxJson spriteBox = new SpriteboxJson();
                         spriteBox.posX = posX;
@@ -167,6 +169,7 @@ namespace PestControlAnimator.shared.animations
                         spriteBox.sourceWidth = sourceWidth;
                         spriteBox.sourceHeight = sourceHeight;
                         spriteBox.layer = layer;
+                        spriteBox.visible = visible;
 
                         keyframe.AddSpriteBox(name, Spritebox.FromJsonElement(spriteBox));
                     }

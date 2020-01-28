@@ -283,6 +283,8 @@ namespace PestControlAnimator.wpf.controls
 
                 MainWindowViewModel.MonogameWindow.GetPreviewObject().SetSpriteBoxes(sprBoxes);
             }
+
+            MainWindow.mainWindow.Properties.UpdateSpriteTree();
         }
 
         public double GetRealScreenOffset()
@@ -498,20 +500,12 @@ namespace PestControlAnimator.wpf.controls
 
         private void Button_Click_3(object sender, RoutedEventArgs e)
         {
-            TimeLineOffset -= 10;
-            if (TimeLineOffset < 0)
-            {
-                TimeLineOffset = 0;
-            }
-            DrawTimelineSections();
-            DisplayTimelineEnd();
+            
         }
 
         private void Button_Click_4(object sender, RoutedEventArgs e)
         {
-            TimeLineOffset += 10;
-            DrawTimelineSections();
-            DisplayTimelineEnd();
+
         }
 
         private void TimeLineCanvas_MouseEnter(object sender, MouseEventArgs e)

@@ -33,11 +33,13 @@ namespace PestControlAnimator.wpf.controls
         private void Canvas_Loaded(object sender, RoutedEventArgs e)
         {
             UpdateFields();
+            UpdateSpriteTree();
         }
 
         private void Canvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             UpdateFields();
+            UpdateSpriteTree();
         }
 
         public void UpdateFields()
@@ -362,6 +364,55 @@ namespace PestControlAnimator.wpf.controls
                         }
                     }
                 }
+            }
+        }
+
+        public void UpdateSpriteTree()
+        {
+            if (TimeLine.timeLine.GetKeyframes().Count <= 0)
+                return;
+
+            SpriteTreeCanvas.Children.Clear();
+
+            int keyFrameIndex = 0;
+
+            for (int i = 0; i < TimeLine.timeLine.GetKeyframes().Count; i++)
+            {
+                if (i == MainWindowViewModel.GetNearestKeyframe())
+                {
+                    keyFrameIndex = i;
+                }
+            }
+
+            Keyframe keyFrame = TimeLine.timeLine.GetKeyframes()[keyFrameIndex];
+
+            int count = 0;
+
+            foreach(KeyValuePair<string, Spritebox> pair in keyFrame.GetSpriteBoxes())
+            {
+                WordCheckStrip checkStrip = new WordCheckStrip();
+                checkStrip.MainTextName.Text = pair.Key;
+
+                SpriteTreeCanvas.Children.Add(checkStrip);
+                Canvas.SetTop(checkStrip, count * 20);
+                checkStrip.Width = SpritePropertiesCanvas.Width;
+                checkStrip.Height = 20;
+                checkStrip.MainCheckbox.IsChecked = pair.Value.Visible();
+
+                checkStrip.MainCheckbox.Click += (sender, e) =>
+                {
+                    Spritebox sprBox = null;
+                    keyFrame.GetSpriteBoxes().TryGetValue(pair.Key, out sprBox);
+
+                    if (sprBox != null)
+                    {
+                        sprBox.SetVisible((bool)checkStrip.MainCheckbox.IsChecked);
+
+                        TimeLine.timeLine.DisplayAtScrubber();
+                    }
+                };
+
+                count++;
             }
         }
     }

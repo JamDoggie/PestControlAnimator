@@ -37,7 +37,7 @@ namespace PestControlAnimator.monogame.objects
             {
                 Spritebox spriteBox = pair.Value;
 
-                if (spriteBatch != null && ContentManager.GetTexture(spriteBox.GetTextureKey()) != null)
+                if (spriteBatch != null && ContentManager.GetTexture(spriteBox.GetTextureKey()) != null && spriteBox.Visible())
                 {
                     spriteBatch.Draw(ContentManager.GetTexture(spriteBox.GetTextureKey()), new Rectangle((int)(spriteBox.GetPosition().X + GetPosition().X), (int)(spriteBox.GetPosition().Y + GetPosition().Y), spriteBox.GetWidth(), spriteBox.GetHeight()), spriteBox.GetSourceRectangle(), Color.White);
                 }

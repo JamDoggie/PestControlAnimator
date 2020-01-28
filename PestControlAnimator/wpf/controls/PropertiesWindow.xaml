@@ -7,6 +7,11 @@
              mc:Ignorable="d" 
              d:DesignHeight="500" d:DesignWidth="500">
     <Grid Background="#2f2f38">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
@@ -25,16 +30,26 @@
             </TabItem>
 
             <TabItem Header="Project Properties">
-                <Grid Background="#292930">
-
-                </Grid>
-            </TabItem>
-
-            <TabItem Header="Current Sprite Tree">
-                <Grid Background="#292930">
+                <Grid Background="#2f2f38">
 
                 </Grid>
             </TabItem>
         </TabControl>
+
+        <Grid Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="60*"/>
+            </Grid.ColumnDefinitions>
+
+            <Canvas Grid.Column="0" Background="#282830">
+
+            </Canvas>
+
+            <Canvas Grid.Column="1" Background="#2f2f38" Name="SpriteTreeCanvas">
+
+            </Canvas>
+        </Grid>
+        
     </Grid>
 </UserControl>
