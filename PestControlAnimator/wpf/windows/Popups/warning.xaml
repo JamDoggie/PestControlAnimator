@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--This file is compatible with Silverlight-->
+<Canvas xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Name="SVGRoot" Width="128" Height="128">
+    <Canvas.RenderTransform>
+        <TranslateTransform X="0" Y="0"/>
+    </Canvas.RenderTransform>
+    <Canvas.Resources/>
+    <!--Unknown tag: sodipodi:namedview-->
+    <!--Unknown tag: metadata-->
+    <Canvas Name="layer1">
+        <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Name="path12244" Fill="#FFA08C40" StrokeThickness="3.49228334" Stroke="#FFA08C40" StrokeMiterLimit="4" StrokeLineJoin="Round" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat" Opacity="1" Data="m 65.999999 13.5 c 8.272291 -0.06514 27.25213 38.17627 31.444685 45.307716 4.192556 7.131446 28.377666 42.312684 24.297926 49.509274 -4.07973 7.19658 -46.687681 4.5129 -54.959972 4.57803 -8.272291 0.0651 -50.832695 3.41944 -55.02525 -3.71201 C 7.5648325 102.05157 31.192942 66.493842 35.272678 59.297259 39.352414 52.100677 57.727708 13.565136 65.999999 13.5 Z"/>
+        <TextBlock xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" FontSize="112.0539093" FontWeight="Normal" FontFamily="sans-serif" FontStyle="normal" Foreground="#FFFFFFFF" Canvas.Left="32" Canvas.Top="3" Name="text12248">
+      <Span Foreground="#FFFFFFFF" FontSize="112.0539093" FontWeight="Normal" FontFamily="OCR A Extended" FontStyle="normal">!</Span>
+        </TextBlock>
+    </Canvas>
+</Canvas>

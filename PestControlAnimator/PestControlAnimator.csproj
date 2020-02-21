@@ -25,4 +25,16 @@
   <ItemGroup>
     <Folder Include="Themes\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="wpf\windows\Popups\MassMoveSprites.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="wpf\windows\Popups\MassMoveSprites.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
 </Project>

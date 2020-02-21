@@ -9,7 +9,7 @@ namespace PestControlAnimator.monogame.content
 {
     public static class ContentManager
     {
-        private static Dictionary<string, Texture2D> _textures = new Dictionary<string, Texture2D>();
+        public static Dictionary<string, Texture2D> Textures { get; } = new Dictionary<string, Texture2D>();
 
         /// <summary>
         /// Grabs texture from Dictionary, returns null if no texture with the given key exists.
@@ -20,7 +20,7 @@ namespace PestControlAnimator.monogame.content
         public static Texture2D GetTexture(string key)
         {
             Texture2D tex;
-            _textures.TryGetValue(key, out tex);
+            Textures.TryGetValue(key, out tex);
 
             return tex;
         }
@@ -32,7 +32,7 @@ namespace PestControlAnimator.monogame.content
         /// <param name="texture"></param>
         public static void LoadTexture(string key, Texture2D texture)
         {
-            _textures[key] = texture;
+            Textures[key] = texture;
         }
 
         /// <summary>
@@ -42,7 +42,12 @@ namespace PestControlAnimator.monogame.content
         /// <param name="texture"></param>
         public static void UnloadTexture(string key, Texture2D texture)
         {
-            _textures.Remove(key);
+            Textures.Remove(key);
+        }
+
+        public static void UnloadAllTextures()
+        {
+            Textures.Clear();
         }
     }
 }

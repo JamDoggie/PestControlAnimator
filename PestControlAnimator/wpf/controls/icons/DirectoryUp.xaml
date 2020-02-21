@@ -1,0 +1,17 @@
+﻿<UserControl x:Class="PestControlAnimator.wpf.controls.icons.DirectoryUp"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PestControlAnimator.wpf.controls.icons"
+             mc:Ignorable="d" 
+             d:DesignHeight="24" d:DesignWidth="24">
+    <Grid Width="24" Height="24">
+        <Canvas Name="layer1">
+            <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Name="path1375" Fill="#FF555563" StrokeThickness="0.12187884" StrokeMiterLimit="4" StrokeLineJoin="Miter" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat" Data="M 0.813476 6.3353273 V 20.665162 H 4.6170105 V 14.68597 H 14.886774 v 5.979192 h 3.424749 V 6.3353273 Z M 7.1026424 16.946182 v 3.71898 h 5.3007396 v -3.71898 z"/>
+            <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Name="path5165" Fill="#FF484855" StrokeThickness="1.2187885" StrokeLineJoin="Miter" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat" Data="M 0.814223 8.3656887 V 4.272338 h 7.049449 l 2.725956 2.0768181 -2.6245255 2.0451362 z"/>
+            <Rectangle xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Canvas.Left="15.543587" Canvas.Top="8.1472263" Width="3.8929367" Height="12.517937" RadiusY="0" RadiusX="0" Name="rect2491" Fill="#FFA08B40" StrokeThickness="6.11344719" StrokeMiterLimit="4" StrokeLineJoin="Round" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat" Opacity="1"/>
+            <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Name="path2493" Fill="#FFA08B40" StrokeThickness="1.37156415" StrokeLineJoin="Miter" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat" Data="m 11.4375 8.53125 h 12.46875 l -6.296101 -7.5 z"/>
+        </Canvas>
+    </Grid>
+</UserControl>

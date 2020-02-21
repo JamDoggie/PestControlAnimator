@@ -307,7 +307,7 @@
     <Grid Background="#33333d" Name="TimeGrid" Loaded="TimeGrid_Loaded">
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="24"></RowDefinition>
             <RowDefinition Height="7*"></RowDefinition>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal" Background="#282830">

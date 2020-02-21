@@ -7,12 +7,12 @@
              mc:Ignorable="d" 
              d:DesignHeight="20" d:DesignWidth="20">
     <Grid>
-        <Ellipse xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Width="15" Height="15" Name="rect3761" Fill="#FFA08B40"  MouseEnter="mouseEnter" MouseLeave="mouseLeave" MouseMove="rect3761_MouseMove" MouseDown="rect3761_MouseDown" MouseUp="rect3761_MouseUp">
-            <Ellipse.RenderTransform>
-                
-                <TranslateTransform X="0"/>
-            </Ellipse.RenderTransform>
+        
 
-        </Ellipse>
+        <Rectangle xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Name="rect3761" Canvas.Left="6.2520895" MouseEnter="mouseEnter" MouseLeave="mouseLeave" MouseMove="rect3761_MouseMove" MouseDown="rect3761_MouseDown" MouseUp="rect3761_MouseUp" Canvas.Top="-4.4219427" RadiusY="0.32323915" RadiusX="0.32323915" Fill="#FFA08C40" StrokeThickness="2.59191513" Stroke="#FFA08C40" StrokeMiterLimit="4" StrokeLineJoin="Round" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat" Opacity="1" Width="15" Height="15" Margin="9,-1,-4,6">
+            <Rectangle.RenderTransform>
+                <RotateTransform Angle="45" CenterY="0.32323915"/>
+            </Rectangle.RenderTransform>
+        </Rectangle>
     </Grid>
 </UserControl>

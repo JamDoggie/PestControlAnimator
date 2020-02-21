@@ -39,7 +39,14 @@ namespace PestControlAnimator.shared
             ProjectInfoJson projInfo = GetProjectInfo();
             if (!Directory.Exists(projInfo.ContentPath))
             {
-                Directory.CreateDirectory(projInfo.ContentPath);
+                try
+                {
+                    Directory.CreateDirectory(projInfo.ContentPath);
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    return "";
+                }
             }
 
             return projInfo.ContentPath;
@@ -50,6 +57,9 @@ namespace PestControlAnimator.shared
         /// </summary>
         public static void LoadProjectContent()
         {
+            if (MainWindow.project.GetProjectInfo().ContentPath.Length == 0 || !Directory.Exists(MainWindow.project.GetProjectInfo().ContentPath))
+                return;
+
             foreach (string filePath in Directory.GetFiles(MainWindow.project.GetProjectInfo().ContentPath))
             {
                 FileInfo fileInfo = new FileInfo(filePath);

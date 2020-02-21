@@ -111,11 +111,16 @@ namespace PestControlAnimator
 
                 if (TimeLineInfo.timelineMs > TimeLine.timeLine.TimeLineEnd * 16)
                 {
+                    float msDifference = ((float)TimeLineInfo.timelineMs) - ((float)TimeLine.timeLine.TimeLineEnd * 16);
                     TimeLineInfo.timelineMs = TimeLine.timeLine.TimeLineEnd * 16;
 
                     if (MainWindow.project.GetProjectInfo().Loop)
                     {
-                        TimeLineInfo.timelineMs = MainWindow.project.GetProjectInfo().LoopToFrame;
+                        TimeLineInfo.timelineMs = MainWindow.project.GetProjectInfo().LoopToFrame * 16 + msDifference;
+                    }
+                    else
+                    {
+                        TimeLineInfo.isPlaying = false;
                     }
                 }
 

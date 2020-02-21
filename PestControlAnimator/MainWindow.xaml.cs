@@ -1,20 +1,25 @@
 ﻿using Microsoft.Win32;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 using PestControlAnimator.monogame.content;
 using PestControlAnimator.monogame.objects;
 using PestControlAnimator.shared;
 using PestControlAnimator.shared.animations;
 using PestControlAnimator.shared.animations.json;
 using PestControlAnimator.wpf.controls;
+using PestControlAnimator.wpf.controls.icons;
 using PestControlAnimator.wpf.structs;
 using PestControlAnimator.wpf.windows;
+using PestControlAnimator.wpf.windows.Popups;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -26,29 +31,53 @@ namespace PestControlAnimator
 
         public static MainWindow mainWindow { get; set; }
 
+        public Preferences Preferences { get; set; } = new Preferences();
+
+        public string PreferencesPath { get; set; } = "preferences.json";
+
+        public ObservableCollection<ProjectListViewElement> ListViewElements { get; }
+
+        private string _CurrentDirectory = null;
+
+        public bool? ShouldReloadTexures = null;
+
         public MainWindow()
         {
+            ListViewElements = new ObservableCollection<ProjectListViewElement>();
             mainWindow = this;
             InitializeComponent();
+
             NewProject projectWindow = new NewProject();
             projectWindow.ShowDialog();
 
-            foreach (string file in Directory.GetFiles(project.GetContentPath()))
+            _CurrentDirectory = project.GetContentPath();
+
+            UpdateExplorer();
+
+            if (!File.Exists(PreferencesPath))
             {
-                FileInfo info = new FileInfo(file);
-                string fileName = info.Name;
+                FileStream stream = File.Create(PreferencesPath);
 
-                ProjectListViewElement element = new ProjectListViewElement()
-                {
-                    FileName = fileName
-                };
+                stream.Dispose();
 
-                ProjectView.Items.Add(element);
+                File.WriteAllText(PreferencesPath, JsonConvert.SerializeObject(Preferences, Formatting.Indented));
+
+                string jsonString = File.ReadAllText(PreferencesPath);
+                Preferences = JsonConvert.DeserializeObject<Preferences>(jsonString);
+            }
+            else
+            {
+                string jsonString = File.ReadAllText(PreferencesPath);
+
+                Preferences = JsonConvert.DeserializeObject<Preferences>(jsonString);
             }
 
             MainView.AllowDrop = true;
+        }
 
-            
+        public void WriteToPreferences()
+        {
+            File.WriteAllText(PreferencesPath, JsonConvert.SerializeObject(Preferences, Formatting.Indented));
         }
 
         private void MonoGameContentControl_MouseEnter(object sender, MouseEventArgs e)
@@ -226,7 +255,120 @@ namespace PestControlAnimator
                 TimeLine.timeLine.DisplayAtScrubber();
                 TimeLine.timeLine.DisplayTimelineEnd();
                 Properties.UpdateFields();
+
+                ProjectManager.LoadProjectContent();
+
+                if (Directory.Exists(project.GetProjectInfo().ContentPath))
+                {
+                    _CurrentDirectory = project.GetProjectInfo().ContentPath;
+                }
+
+                UpdateExplorer();
             }
+        }
+
+        private void ProjectView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void ProjectView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            ProjectListViewElement element = ProjectView.SelectedItem as ProjectListViewElement;
+
+            if (element != null && element.FolderVisibility == Visibility.Visible)
+            {
+                if (Directory.Exists($"{_CurrentDirectory}/{element.FileName}"))
+                {
+                    string dir = $"{_CurrentDirectory}/{element.FileName}";
+                    _CurrentDirectory = dir;
+                    UpdateExplorer();
+                }
+            }
+        }
+
+        public void UpdateExplorer()
+        {
+            if (ProjectView.ItemsSource as ObservableCollection<ProjectListViewElement> == null)
+            {
+                ProjectView.ItemsSource = ListViewElements;
+            }
+
+            ObservableCollection<ProjectListViewElement> elements = ProjectView.ItemsSource as ObservableCollection<ProjectListViewElement>;
+
+            elements.Clear();
+
+            if (_CurrentDirectory.Length == 0)
+                return;
+
+            foreach (string folder in Directory.GetDirectories(_CurrentDirectory))
+            {
+                FileInfo info = new FileInfo(folder);
+                string fileName = info.Name;
+
+                ProjectListViewElement element = new ProjectListViewElement()
+                {
+                    FileName = fileName,
+                    FolderVisibility = Visibility.Visible,
+                    FileVisibility = Visibility.Hidden
+                };
+
+                elements.Add(element);
+            }
+
+            foreach (string file in Directory.GetFiles(_CurrentDirectory))
+            {
+                FileInfo info = new FileInfo(file);
+                string fileName = info.Name;
+
+                ProjectListViewElement element = new ProjectListViewElement()
+                {
+                    FileName = fileName,
+                    FolderVisibility = Visibility.Hidden,
+                    FileVisibility = Visibility.Visible
+                };
+
+                elements.Add(element);
+            }
+            
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateExplorer();
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            if (Preferences.ShowWarningOnReload)
+            {
+                ShouldReloadTextures warningWindow = new ShouldReloadTextures();
+                warningWindow.ShowDialog();
+            }
+
+            if (ShouldReloadTexures != false)
+            {
+                ContentManager.UnloadAllTextures();
+
+                ProjectManager.LoadProjectContent();
+
+                Console.WriteLine("Textures Reloaded.");
+            }
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            if (_CurrentDirectory != project.GetContentPath())
+            {
+                _CurrentDirectory = Directory.GetParent(_CurrentDirectory).FullName;
+                UpdateExplorer();
+            }
+        }
+
+        private void MenuItem_Click_4(object sender, RoutedEventArgs e)
+        {
+            MassMoveSprites massMoveSprites = new MassMoveSprites();
+            massMoveSprites.ShowDialog();
         }
     }
 }

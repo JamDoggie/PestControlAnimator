@@ -4,10 +4,12 @@ using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using PestControlAnimator.monogame.content;
 using PestControlAnimator.monogame.objects;
+using PestControlAnimator.shared;
 using PestControlAnimator.shared.animations;
 using PestControlAnimator.shared.animations.json;
 using PestControlAnimator.shared.json;
 using PestControlAnimator.wpf.controls;
+using PestControlAnimator.wpf.windows.Popups;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -124,6 +126,10 @@ namespace PestControlAnimator.wpf.windows
                 }
 
                 TimeLine.timeLine.TimeLineEnd = MainWindow.project.GetProjectInfo().TimelineEnd;
+
+                // If content path was invalid, show error dialog
+                if (!Directory.Exists(MainWindow.project.GetProjectInfo().ContentPath))
+                    MessageBox.Show("Content Path is invalid or corrupt. No textures will be loaded.", "Content Path missing or corrupt");
             }
         }
     }
