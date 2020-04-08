@@ -65,23 +65,31 @@ namespace PestControlAnimator.monogame.graphicspipeline
             return texture;
         }
 
-        public static void DrawRectangle(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Rectangle rectangle, Color color)
+        /// <summary>
+        /// Helper method for drawing rectangle with specified thickness and color.
+        /// </summary>
+        /// <param name="spriteBatch"></param>
+        /// <param name="graphicsDevice"></param>
+        /// <param name="rectangle"></param>
+        /// <param name="strokeSize"></param>
+        /// <param name="color"></param>
+        public static void DrawRectangle(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Rectangle rectangle, Color color, int strokeSize = 1)
         {
             Texture2D texture = GetWhitePixel(graphicsDevice);
 
-            if (spriteBatch == null)
+            if (spriteBatch == null || graphicsDevice == null || rectangle == null || color == null)
             {
                 return;
             }
 
             // Top part of rectangle
-            spriteBatch.Draw(texture, new Rectangle(rectangle.X, rectangle.Y, rectangle.Width, 1), new Rectangle(0, 0, 1, 1), color);
+            spriteBatch.Draw(texture, new Rectangle(rectangle.X + strokeSize, rectangle.Y, rectangle.Width - strokeSize, strokeSize), new Rectangle(0, 0, 1, 1), color);
             // Left side of rectangle
-            spriteBatch.Draw(texture, new Rectangle(rectangle.X, rectangle.Y + 1, 1, rectangle.Height - 1), new Rectangle(0, 0, 1, 1), color);
+            spriteBatch.Draw(texture, new Rectangle(rectangle.X, rectangle.Y, strokeSize, rectangle.Height), new Rectangle(0, 0, 1, 1), color);
             // Right side of rectangle
-            spriteBatch.Draw(texture, new Rectangle(rectangle.X + rectangle.Width - 1, rectangle.Y + 1, 1, rectangle.Height - 1), new Rectangle(0, 0, 1, 1), color);
+            spriteBatch.Draw(texture, new Rectangle(rectangle.X + rectangle.Width - strokeSize, rectangle.Y, strokeSize, rectangle.Height), new Rectangle(0, 0, 1, 1), color);
             // Bottom part of rectangle
-            spriteBatch.Draw(texture, new Rectangle(rectangle.X, rectangle.Y + rectangle.Height - 1, rectangle.Width, 1), new Rectangle(0, 0, 1, 1), color);
+            spriteBatch.Draw(texture, new Rectangle(rectangle.X + strokeSize, rectangle.Y + rectangle.Height - strokeSize, rectangle.Width - strokeSize, strokeSize), new Rectangle(0, 0, 1, 1), color);
         }
     }
 }

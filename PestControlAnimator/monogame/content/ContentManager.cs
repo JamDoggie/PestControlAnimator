@@ -20,7 +20,7 @@ namespace PestControlAnimator.monogame.content
         public static Texture2D GetTexture(string key)
         {
             Texture2D tex;
-            Textures.TryGetValue(key, out tex);
+            Textures.TryGetValue(key.Replace('\\', '/'), out tex);
 
             return tex;
         }

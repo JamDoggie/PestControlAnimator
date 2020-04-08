@@ -47,8 +47,15 @@ namespace PestControlAnimator
             mainWindow = this;
             InitializeComponent();
 
-            NewProject projectWindow = new NewProject();
-            projectWindow.ShowDialog();
+            if (App.startupPath.Length == 0)
+            {
+                NewProject projectWindow = new NewProject();
+                projectWindow.ShowDialog();
+            }
+            else
+            {
+                OpenProject(App.startupPath);
+            }
 
             _CurrentDirectory = project.GetContentPath();
 
@@ -105,7 +112,7 @@ namespace PestControlAnimator
             MainWindowViewModel.MonogameWindow.MouseMove(sender, e);
         }
 
-        private static T FindAnchestor<T>(DependencyObject current)
+        private static T FindAncestor<T>(DependencyObject current)
     where T : DependencyObject
         {
             do
@@ -126,7 +133,7 @@ namespace PestControlAnimator
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 ListView listView = sender as ListView;
-                ListViewItem listViewItem = FindAnchestor<ListViewItem>((DependencyObject)e.OriginalSource);
+                ListViewItem listViewItem = FindAncestor<ListViewItem>((DependencyObject)e.OriginalSource);
 
                 // If there was no listviewitem selected, break.
                 if (listViewItem == null)
@@ -170,8 +177,10 @@ namespace PestControlAnimator
             if (e.Data.GetDataPresent("ProjectListViewElement"))
             {
                 ProjectListViewElement ViewElement = (ProjectListViewElement)e.Data.GetData("ProjectListViewElement");
-                FileInfo info = new FileInfo($"{project.GetProjectInfo().ContentPath}/{ViewElement.FileName}");
-                string safeFileName = info.Name.Substring(0, info.Name.Length - info.Extension.Length);
+                FileInfo info = new FileInfo($"{_CurrentDirectory}/{ViewElement.FileName}");
+                string safeFileName = Util.GetRelativePath(project.GetContentPath(), _CurrentDirectory) + info.Name.Substring(0, info.Name.Length - info.Extension.Length);
+                
+                Console.WriteLine(safeFileName);
 
                 Texture2D tex = ContentManager.GetTexture(safeFileName);
 
@@ -226,31 +235,7 @@ namespace PestControlAnimator
             openFileDialog.Filter = "PestControl Engine Animation Project (*.animproj)|*.animproj|All files (*.*)|*.*";
             if (openFileDialog.ShowDialog() == true)
             {
-                Stream projectStream;
-
-                if ((projectStream = openFileDialog.OpenFile()) != null)
-                {
-                    project.ProjectPath = $"{openFileDialog.FileName}";
-                    projectStream.Dispose();
-                }
-
-                TimeLine.timeLine.ClearKeyframes();
-
-                foreach (Animation animation in project.GetProjectInfo().animations)
-                {
-                    Dictionary<string, Spritebox> spriteBoxes = new Dictionary<string, Spritebox>();
-
-                    foreach (KeyValuePair<string, SpriteboxJson> pair in animation.spriteBoxes)
-                    {
-                        SpriteboxJson spritebox = pair.Value;
-
-                        spriteBoxes.Add(pair.Key, Spritebox.FromJsonElement(spritebox));
-                    }
-
-                    TimeLine.timeLine.AddKeyframe(new Keyframe(animation.timelineX, 0, spriteBoxes, TimeLine.timeLine));
-                }
-
-                TimeLine.timeLine.TimeLineEnd = project.GetProjectInfo().TimelineEnd;
+                OpenProject(openFileDialog.FileName);
 
                 TimeLine.timeLine.DisplayAtScrubber();
                 TimeLine.timeLine.DisplayTimelineEnd();
@@ -285,6 +270,35 @@ namespace PestControlAnimator
                     UpdateExplorer();
                 }
             }
+        }
+
+        public void OpenProject(string path)
+        {
+            Stream projectStream;
+
+            if ((projectStream = File.OpenRead(path)) != null)
+            {
+                project.ProjectPath = $"{path}";
+                projectStream.Dispose();
+            }
+
+            TimeLine.timeLine.ClearKeyframes();
+
+            foreach (Animation animation in project.GetProjectInfo().animations)
+            {
+                Dictionary<string, Spritebox> spriteBoxes = new Dictionary<string, Spritebox>();
+
+                foreach (KeyValuePair<string, SpriteboxJson> pair in animation.spriteBoxes)
+                {
+                    SpriteboxJson spritebox = pair.Value;
+
+                    spriteBoxes.Add(pair.Key, Spritebox.FromJsonElement(spritebox));
+                }
+
+                TimeLine.timeLine.AddKeyframe(new Keyframe(animation.timelineX, 0, spriteBoxes, TimeLine.timeLine));
+            }
+
+            TimeLine.timeLine.TimeLineEnd = project.GetProjectInfo().TimelineEnd;
         }
 
         public void UpdateExplorer()

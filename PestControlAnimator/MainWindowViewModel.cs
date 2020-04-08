@@ -124,7 +124,7 @@ namespace PestControlAnimator
                     }
                 }
 
-                Canvas.SetLeft(MainWindow.mainWindow.MainTimeline.Scrubber, (TimeLineInfo.timelineMs/16) * MainWindow.mainWindow.MainTimeline.ScreenScale);
+                Canvas.SetLeft(MainWindow.mainWindow.MainTimeline.Scrubber, (TimeLineInfo.timelineMs/ 16) * MainWindow.mainWindow.MainTimeline.ScreenScale);
                 if (TimeLine.timeLine != null)
                 {
                     TimeLine.timeLine.DisplayAtScrubber();
@@ -204,7 +204,7 @@ namespace PestControlAnimator
                     _shouldUpdateProperties = false;
                 }
             }
-            MainCamera.UpdateCamera(GraphicsDevice.Viewport);
+            MainCamera.UpdateCamera(GraphicsDevice.Viewport, gameTime);
         }
 
         public void KeyDown(object sender, KeyEventArgs e)
@@ -246,7 +246,13 @@ namespace PestControlAnimator
 
                 _guiBatch.Begin();
 
-                _guiBatch.Draw(gridTexture, new Rectangle((int)sidebarCoords, 50, 32, 32), Color.White);
+                foreach(ResizeBox box in selectionBox.GetChildren())
+                {
+                    Vector2 transformed = Vector2.Transform(new Vector2(box.GetHoverPoint().X, box.GetHoverPoint().Y), MainCamera.Transform);
+                    if (selectionBox.GetBoundObject() != null)
+                        SpriteRenderer.DrawRectangle(_guiBatch, GraphicsDevice, new Rectangle((int)transformed.X - 16, (int)transformed.Y - 16, 32, 32), Color.White, 3);
+                }
+                
 
                 _guiBatch.End();
             }
@@ -298,11 +304,10 @@ namespace PestControlAnimator
             return sprBoxSelected;
         }
 
-        float oldMidX = 0;
-        float oldMidY = 0;
 
 
-        Vector2 oldMidPositionWorld = new Vector2();
+        Vector2 previousMousePos = Vector2.Zero;
+        bool previouseMouseInit = false;
 
         Vector2 grabPosition = new Vector2();
 
@@ -341,19 +346,21 @@ namespace PestControlAnimator
 
                 oldWorldMousePosition = worldMousePosition;
             }
-            
-            if (_mouseDownMiddle)
+
+            if (previouseMouseInit != false)
             {
-                Vector2 newMidPosition = Vector2.Transform(new Vector2((float)e.GetPosition(MainWindow.mainWindow.MainView).X, (float)e.GetPosition(MainWindow.mainWindow.MainView).Y), Matrix.Invert(MainCamera.Transform));
+                if (e.MiddleButton == MouseButtonState.Pressed)
+                {
 
-                MainCamera.MoveCamera(new Vector2(-((newMidPosition.X - oldMidPositionWorld.X)/1.5f), -((newMidPosition.Y - oldMidPositionWorld.Y)/1.5f)));
-
-                oldMidX = (float)e.GetPosition(MainWindow.mainWindow.MainView).X;
-                oldMidY = (float)e.GetPosition(MainWindow.mainWindow.MainView).Y;
-                oldMidPositionWorld = newMidPosition;
+                    Vector2 worldNew = Vector2.Transform(new Vector2((float)e.GetPosition(MainWindow.mainWindow.MainView).X, (float)e.GetPosition(MainWindow.mainWindow.MainView).Y), Matrix.Invert(MainCamera.Transform));
+                    Vector2 worldOld = Vector2.Transform(new Vector2(previousMousePos.X, previousMousePos.Y), Matrix.Invert(MainCamera.Transform));
+                    MainCamera.Position = MainCamera.Position + (worldNew - worldOld);
+                }
             }
+            previouseMouseInit = true;
+            previousMousePos = new Vector2((float)e.GetPosition(MainWindow.mainWindow.MainView).X, (float)e.GetPosition(MainWindow.mainWindow.MainView).Y);
 
-            foreach(Drawable drawable in SpriteManager.GetSprites())
+            foreach (Drawable drawable in SpriteManager.GetSprites())
             {
                 drawable.MouseMove(sender, e, worldMousePosition);
             }
@@ -411,14 +418,6 @@ namespace PestControlAnimator
                 _shouldUpdateProperties = true;
             }
                 
-
-            if (e.MiddleButton == MouseButtonState.Pressed)
-            {
-                _mouseDownMiddle = true;
-                oldMidX = (float)e.GetPosition(MainWindow.mainWindow.MainView).X;
-                oldMidY = (float)e.GetPosition(MainWindow.mainWindow.MainView).Y;
-                oldMidPositionWorld = Vector2.Transform(new Vector2(oldMidX, oldMidY), Matrix.Invert(MainCamera.Transform));
-            }
         }
 
         public void MouseWheel(object sender, MouseWheelEventArgs e)

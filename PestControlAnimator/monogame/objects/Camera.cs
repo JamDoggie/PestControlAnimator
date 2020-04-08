@@ -18,14 +18,14 @@ namespace PestControlAnimator.monogame.objects
         public Rectangle VisibleArea { get; protected set; }
         public Matrix Transform { get; set; }
 
-        private float currentMouseWheelValue, previousMouseWheelValue, zoom, previousZoom;
+        public float CurrentZoomLerp { get; set; } = 1f;
+
+        private float zoom, previousZoom;
 
         public Camera(Viewport viewport)
         {
             Bounds = viewport.Bounds;
             Zoom = 1f;
-            Position = new Vector2(Bounds.Width / 2, Bounds.Height / 2);
-            OriginalPosition = new Vector2(Bounds.Width / 2, Bounds.Height / 2);
         }
 
 
@@ -49,9 +49,8 @@ namespace PestControlAnimator.monogame.objects
 
         private void UpdateMatrix()
         {
-            Transform = Matrix.CreateTranslation(new Vector3(-Position.X, -Position.Y, 0)) *
-                    Matrix.CreateTranslation(new Vector3(Bounds.Width * 0.5f, Bounds.Height * 0.5f, 0)) *
-                    Matrix.CreateScale(zoom);
+            Transform = Matrix.CreateTranslation(new Vector3(Position.X, Position.Y, 0)) *
+                    Matrix.CreateScale(CurrentZoomLerp);
 
             UpdateVisibleArea();
         }
@@ -75,70 +74,16 @@ namespace PestControlAnimator.monogame.objects
             }
         }
 
-        public void UpdateCamera(Viewport bounds)
+        public void UpdateCamera(Viewport bounds, GameTime gameTime)
         {
             Bounds = bounds.Bounds;
+
             UpdateMatrix();
 
-            Vector2 cameraMovement = Vector2.Zero;
-            int moveSpeed;
-
-            if (Zoom > .8f)
-            {
-                moveSpeed = 15;
-            }
-            else if (Zoom < .8f && Zoom >= .6f)
-            {
-                moveSpeed = 20;
-            }
-            else if (Zoom < .6f && Zoom > .35f)
-            {
-                moveSpeed = 25;
-            }
-            else if (Zoom <= .35f)
-            {
-                moveSpeed = 30;
-            }
-            else
-            {
-                moveSpeed = 10;
-            }
-
-            if (Keyboard.IsKeyDown(Key.A))
-            {
-                cameraMovement.X = 1;
-            }
-
-            //currentMouseWheelValue = Mouse.whe.ScrollWheelValue;
-
-            
-
-            //if (currentMouseWheelValue > previousMouseWheelValue)
-            //{
-            //    AdjustZoom(.05f);
-            //    Console.WriteLine(moveSpeed);
-            //}
-
-            //if (currentMouseWheelValue < previousMouseWheelValue)
-            //{
-            //    AdjustZoom(-.05f);
-            //    Console.WriteLine(moveSpeed);
-            //}
-
-            //previousMouseWheelValue = currentMouseWheelValue;
-            
-
-            
+            CurrentZoomLerp = MathHelper.Lerp(CurrentZoomLerp, Zoom, 0.1f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 100));
 
             previousZoom = zoom;
             zoom = Zoom;
-            if (previousZoom != zoom)
-            {
-                Console.WriteLine(zoom);
-
-            }
-
-            MoveCamera(cameraMovement);
         }
     }
 }

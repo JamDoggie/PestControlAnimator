@@ -60,23 +60,33 @@ namespace PestControlAnimator.shared
             if (MainWindow.project.GetProjectInfo().ContentPath.Length == 0 || !Directory.Exists(MainWindow.project.GetProjectInfo().ContentPath))
                 return;
 
-            foreach (string filePath in Directory.GetFiles(MainWindow.project.GetProjectInfo().ContentPath))
-            {
-                FileInfo fileInfo = new FileInfo(filePath);
+            WalkThroughAndLoadSprites(MainWindow.project.GetContentPath());
+        }
 
+        private static void WalkThroughAndLoadSprites(string path)
+        {
+            DirectoryInfo dir = new DirectoryInfo(path);
+            
+            foreach (FileInfo fileInfo in dir.GetFiles())
+            {
                 if (fileInfo.Extension == ".png")
                 {
-                    string safeFileName = fileInfo.Name.Substring(0, fileInfo.Name.Length - 4);
+                    string safeFileName = Util.GetRelativePath(MainWindow.project.GetContentPath(), dir.FullName) + fileInfo.Name.Substring(0, fileInfo.Name.Length - 4);
                     if (ContentManager.GetTexture(safeFileName) == null)
                     {
-                        FileStream stream = new FileStream(filePath, FileMode.Open);
+                        FileStream stream = new FileStream(fileInfo.FullName, FileMode.Open);
 
                         Texture2D texture = Texture2D.FromStream(MainWindowViewModel.MonogameWindow.GetGraphicsDevice(), stream);
-                        ContentManager.LoadTexture(safeFileName, texture);
+                        ContentManager.LoadTexture(safeFileName.Replace('\\', '/'), texture);
 
                         stream.Dispose();
                     }
                 }
+            }
+
+            foreach (DirectoryInfo directory in dir.GetDirectories())
+            {
+                WalkThroughAndLoadSprites(directory.FullName);
             }
         }
 

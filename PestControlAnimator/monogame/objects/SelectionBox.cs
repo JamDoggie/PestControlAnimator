@@ -73,6 +73,8 @@ namespace PestControlAnimator.monogame.objects
         private bool _mouseDown = false;
         private bool _selected = false;
 
+        private Rectangle _HoverBox;
+
         private Vector2 _distanceOnSelect = new Vector2();
 
         public ResizeBox(ResizeBoxEnumVertical vertical, ResizeBoxEnumHorizontal horizontal, SelectionBox selectionBox)
@@ -84,13 +86,22 @@ namespace PestControlAnimator.monogame.objects
 
         public override void Draw(GraphicsDevice device, SpriteBatch spriteBatch)
         {
-            SpriteRenderer.DrawRectangle(spriteBatch, device, GetHoverBox(), Color.White);
-            
+        }
+
+        public Vector2 GetHoverPoint()
+        {
+            return new Vector2(GetPosition().X, GetPosition().Y);
         }
 
         public Rectangle GetHoverBox()
         {
-            return new Rectangle((int)GetPosition().X - 4, (int)GetPosition().Y - 4, 8, 8);
+            int posX = (int)GetPosition().X;
+            int posY = (int)GetPosition().Y;
+
+            int width = (int)(32d / (double)MainWindowViewModel.MonogameWindow.MainCamera.CurrentZoomLerp);
+            int height = (int)(32d / (double)MainWindowViewModel.MonogameWindow.MainCamera.CurrentZoomLerp);
+
+            return new Rectangle(posX - (width / 2), posY - (height / 2), width, height);
         }
 
         public override void Update(GameTime gameTime)
@@ -131,7 +142,7 @@ namespace PestControlAnimator.monogame.objects
                 // Vertical-Top
                 if (VerticalPos == ResizeBoxEnumVertical.TOP)
                 {
-                    Vector2 NewPos = new Vector2(_selectionBox.GetBoundObject().GetPosition().X, worldMousePosition.Y + _distanceOnSelect.Y + 4);
+                    Vector2 NewPos = new Vector2(_selectionBox.GetBoundObject().GetPosition().X, worldMousePosition.Y + _distanceOnSelect.Y + GetHoverBox().Width / 2);
 
                     Vector2 SprOldPos = _selectionBox.GetBoundObject().GetPosition();
 
@@ -157,7 +168,7 @@ namespace PestControlAnimator.monogame.objects
                     Rectangle newRect = sprBox.GetRectangle();
                     
 
-                    sprBox.SetHeight((int)worldMousePosition.Y - (int)sprBox.GetPosition().Y + (int)_distanceOnSelect.Y + 4);
+                    sprBox.SetHeight((int)worldMousePosition.Y - (int)sprBox.GetPosition().Y + (int)_distanceOnSelect.Y + GetHoverBox().Width / 2);
 
                     sprBox.SetSourceRectangle(new Rectangle(sprBox.GetSourceRectangle().X, sprBox.GetSourceRectangle().Y, sprBox.GetSourceRectangle().Width, sprBox.GetHeight()));
                 }
@@ -165,7 +176,7 @@ namespace PestControlAnimator.monogame.objects
                 // Horizontal-Left
                 if (HorizontalPos == ResizeBoxEnumHorizontal.LEFT)
                 {
-                    Vector2 NewPos = new Vector2(worldMousePosition.X + _distanceOnSelect.X + 4, _selectionBox.GetBoundObject().GetPosition().Y);
+                    Vector2 NewPos = new Vector2(worldMousePosition.X + _distanceOnSelect.X + GetHoverBox().Width / 2, _selectionBox.GetBoundObject().GetPosition().Y);
 
                     Vector2 SprOldPos = _selectionBox.GetBoundObject().GetPosition();
 
@@ -190,7 +201,7 @@ namespace PestControlAnimator.monogame.objects
 
                     Rectangle newRect = sprBox.GetRectangle();
 
-                    sprBox.SetWidth((int)worldMousePosition.X - (int)sprBox.GetPosition().X + (int)_distanceOnSelect.X + 4);
+                    sprBox.SetWidth((int)worldMousePosition.X - (int)sprBox.GetPosition().X + (int)_distanceOnSelect.X + GetHoverBox().Width / 2);
 
                     sprBox.SetSourceRectangle(new Rectangle(sprBox.GetSourceRectangle().X, sprBox.GetSourceRectangle().Y, sprBox.GetWidth(), sprBox.GetSourceRectangle().Height));
                 }
@@ -203,6 +214,7 @@ namespace PestControlAnimator.monogame.objects
 
         public override void MouseDown(object sender, MouseEventArgs e, Vector2 worldMousePosition)
         {
+            
             if (GetHoverBox().Intersects(new Rectangle((int)worldMousePosition.X, (int)worldMousePosition.Y, 1, 1)))
             {
                 foreach(KeyValuePair<string, Spritebox> pair in MainWindowViewModel.MonogameWindow.GetPreviewObject().GetSpriteBoxes())
